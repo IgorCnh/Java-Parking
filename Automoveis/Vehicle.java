@@ -29,7 +29,7 @@ public class Vehicle {
     public void setSign(String sign) {
         if(SignValidator.validate(sign) == true){
             this.sign = sign;
-            System.out.println("Your vehicle has been registered, now you can choose your parking space!");
+            System.out.println("Your vehicle has been registered!");
         }
         else{
             throw new IllegalArgumentException("Invalid sign. Try again!.");
