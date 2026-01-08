@@ -1,8 +1,10 @@
 package Automoveis;
 
+import Program.InvalidSignException;
+import Program.WrongExitEntryException;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class Vehicle {
     private VeiculoType model;
@@ -26,21 +28,21 @@ public class Vehicle {
     public String getSign() {
         return sign;
     }
-    public void setSign(String sign) {
+    public void setSign(String sign) throws InvalidSignException {
         if(SignValidator.validate(sign) == true){
             this.sign = sign;
             System.out.println("Your vehicle has been registered!");
         }
         else{
-            throw new IllegalArgumentException("Invalid sign. Try again!.");
+            throw new InvalidSignException("Invalid sign. Try again!.");
         }
     }
     public VeiculoType getModel() {
         return model;
     }
-    public void setModel(VeiculoType model) {
-        this.model = model;
-    }
+    public void setModel(VeiculoType model)  {
+            this.model = model;
+        }
     public String getBrand() {
         return brand;
     }
@@ -59,14 +61,24 @@ public class Vehicle {
     public LocalDateTime getEntryTime() {
         return entryTime;
     }
-    public void setEntryTime(LocalDateTime entryTime) {
-        this.entryTime = entryTime;
+    public void setEntryTime(LocalDateTime entryTime) throws WrongExitEntryException {
+        if(entryTime != null){
+            this.entryTime = entryTime;
+        }
+        else{
+            throw new WrongExitEntryException("Invalid entry time. The entry can't be after the exit time!");
+        }
     }
     public LocalDateTime getExitTime() {
         return exitTime;
     }
-    public void setExitTime(LocalDateTime exitTime) {
-        this.exitTime = exitTime;
+    public void setExitTime(LocalDateTime exitTime) throws WrongExitEntryException {
+        if (exitTime.isAfter(entryTime)){
+            this.exitTime = exitTime;
+        }
+        else{
+            throw new WrongExitEntryException("Invalid entry time. the exit time can't be before the entry time!");
+        }
     }
     public Duration getDuration(){
         return Duration.between(entryTime, exitTime);

@@ -2,6 +2,7 @@ package Estacionamento;
 
 import Automoveis.Vehicle;
 import Automoveis.VeiculoType;
+import Program.InvalidSignException;
 
 
 import java.time.Duration;
@@ -18,15 +19,20 @@ public class Parking {
         }
     }
 
-    public void chooseParkingSpace(int space, Vehicle vehicle) {
-        while (true) {
-            if (vehicles.get(space) == null) {
-                vehicles.set(space, vehicle);
-                break;
-            } else {
-                System.out.println("This position is already filled, please choose another.");
-                return;
+    public void chooseParkingSpace(int space, Vehicle vehicle) throws InvalidSignException {
+        if (space <= availablesParkingSpaces && space >= 0) {
+            while (true) {
+                if (vehicles.get(space) == null) {
+                    vehicles.set(space, vehicle);
+                    break;
+                } else {
+                    System.out.println("This position is already filled, please choose another.");
+                    return;
+                }
             }
+        }
+        else {
+            throw new InvalidSignException("Invalid space. Try again!.");
         }
     }
 
@@ -38,8 +44,10 @@ public class Parking {
         }
     }
 
-    public void entry(Vehicle vehicle) {
+    public void entry(Vehicle vehicle) throws InvalidSignException {
         if (availablesParkingSpaces > 0) {
+            String sign = vehicle.getSign();
+            vehicle.setSign(sign);
             System.out.println("Welcome to the parking lot!");
             availablesParkingSpaces--;
         } else {
