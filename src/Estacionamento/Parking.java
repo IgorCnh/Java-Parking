@@ -12,26 +12,22 @@ public class Parking {
     private static int availablesParkingSpaces = 25;
     private static List<Vehicle> vehicles = new ArrayList();
 
-    static {
+    static { // inicia a lista de vagas com 25 vagas disponíveis (cria com 26, porem a vaga sera descartada com uma exceção
         for (int i = 0; i < 25; i++) {
             vehicles.add(null);
         }
     }
 
-    public void chooseParkingSpace(int space, Vehicle vehicle) throws InvalidSpaceException {
-        if (space <= availablesParkingSpaces && space >= 0) {
-            while (true) {
-                if (vehicles.get(space) == null) {
-                    vehicles.set(space, vehicle);
-                    break;
-                } else {
-                    System.out.println("This position is already filled, please choose another.");
-                    return;
-                }
+    public void chooseParkingSpace(int space, Vehicle vehicle) throws IndexOutOfBoundsException {
+        if ((space <= 24) && (space >= 1)) {
+            if (vehicles.get(space) == null) {
+                vehicles.set(space, vehicle);
+            } else {
+                System.out.println("This position is already filled, please choose another.");
             }
         }
         else {
-            throw new InvalidSpaceException("Invalid space. Try again!.");
+            throw new IndexOutOfBoundsException("Invalid space. Try again!.");
         }
     }
 

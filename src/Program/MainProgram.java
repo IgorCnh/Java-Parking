@@ -32,9 +32,30 @@ public class MainProgram {
             }
         }
         System.out.print("Provide your vehicle brand: ");
-        String brand = sc.nextLine();
+
+        String brand = null;
+        while (true) {
+            brand = sc.nextLine();
+            if (brand.isEmpty() || brand.isEmpty() || brand.length() <= 0) {
+                System.out.println("Invalid! You need to type something!.");
+                System.out.print("Type the brand here: ");
+            }
+            else  {
+                break;
+            }
+        }
         System.out.print("Provide your vehicle color: ");
-        String color = sc.nextLine();
+        String color = null;
+        while (true) {
+            color = sc.nextLine();
+            if (color.isEmpty() || color.isEmpty() || color.length() <= 0) {
+                System.out.println("Invalid! You need to type something!.");
+                System.out.print("Type the color here: ");
+            }
+            else  {
+                break;
+            }
+        }
         System.out.print("Provide your vehicle sign: ");
         String sign = null;
         boolean isSignCorect = false;
@@ -70,18 +91,19 @@ public class MainProgram {
 
         System.out.println("It's time to choose your parking space!");
         System.out.print("Enter the number that matches with the parking space that you want (0 - 25): ");
-        int space = sc.nextInt();
-        sc.nextLine();
+        int space = 0;
         boolean isSpaceValid = false;
         while (isSpaceValid==false) {
             try {
+                space = sc.nextInt();
                 parking.chooseParkingSpace(space, vehicle);
                 isSpaceValid = true;
-            } catch (InvalidSpaceException invspace) {
+            } catch (IndexOutOfBoundsException invspace) {
                 System.out.println(invspace.getMessage());
-                System.out.print("Try again (0 - 25): ");
+                System.out.print("Try again (0 - 24): ");
             }
         }
+        sc.nextLine();
 
         parking.printData(vehicle);
 
