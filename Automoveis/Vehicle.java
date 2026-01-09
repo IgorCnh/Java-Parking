@@ -28,59 +28,69 @@ public class Vehicle {
     public String getSign() {
         return sign;
     }
+
     public void setSign(String sign) throws InvalidSignException {
-        if(SignValidator.validate(sign) == true){
+        if (SignValidator.validate(sign) == true) {
             this.sign = sign;
             System.out.println("Your vehicle has been registered!");
-        }
-        else{
+        } else {
             throw new InvalidSignException("Invalid sign. Try again!.");
         }
     }
+
     public VeiculoType getModel() {
         return model;
     }
-    public void setModel(VeiculoType model)  {
-            this.model = model;
-        }
+
+    public void setModel(VeiculoType model) {
+        this.model = model;
+    }
+
     public String getBrand() {
         return brand;
     }
+
     public void setBrand(String brand) {
         this.brand = brand;
     }
+
     public String getColor() {
         return color;
     }
+
     public void setColor(String color) {
         this.color = color;
     }
-    public String toString(){
+
+    public String toString() {
         return "Model: " + model.toString() + " / Brand: " + brand + " / Sign: " + sign + " / Color: " + color;
     }
+
     public LocalDateTime getEntryTime() {
         return entryTime;
     }
+
     public void setEntryTime(LocalDateTime entryTime) throws WrongExitEntryException {
-        if(entryTime != null){
+        if (entryTime != null) {
             this.entryTime = entryTime;
-        }
-        else{
+        } else {
             throw new WrongExitEntryException("Invalid entry time. The entry can't be after the exit time!");
         }
     }
+
     public LocalDateTime getExitTime() {
         return exitTime;
     }
+
     public void setExitTime(LocalDateTime exitTime) throws WrongExitEntryException {
-        if (exitTime.isAfter(entryTime)){
+        if (exitTime.isAfter(entryTime)) {
             this.exitTime = exitTime;
-        }
-        else{
+        } else {
             throw new WrongExitEntryException("Invalid entry time. the exit time can't be before the entry time!");
         }
     }
-    public Duration getDuration(){
+
+    public Duration getDuration() {
         return Duration.between(entryTime, exitTime);
     }
 

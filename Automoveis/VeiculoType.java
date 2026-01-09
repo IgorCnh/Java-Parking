@@ -6,13 +6,19 @@ public enum VeiculoType {
     TRUCK("Truck");
 
     private String type;
-    VeiculoType(String type){
+
+    VeiculoType(String type) {
         this.type = type;
     }
-    public String getType(){
+
+    public String getType() {
         return this.type;
     }
-    public void setType(String type){
+
+    public void setType(String type) {
         this.type = type;
+    }
+    public String toString() {
+        return this.type;
     }
 }

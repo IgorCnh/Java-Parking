@@ -1,11 +1,10 @@
 package Estacionamento;
 
 import Automoveis.Vehicle;
-import Automoveis.VeiculoType;
 import Program.InvalidSignException;
+import Program.InvalidSpaceException;
 
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class Parking {
         }
     }
 
-    public void chooseParkingSpace(int space, Vehicle vehicle) throws InvalidSignException {
+    public void chooseParkingSpace(int space, Vehicle vehicle) throws InvalidSpaceException {
         if (space <= availablesParkingSpaces && space >= 0) {
             while (true) {
                 if (vehicles.get(space) == null) {
@@ -32,22 +31,20 @@ public class Parking {
             }
         }
         else {
-            throw new InvalidSignException("Invalid space. Try again!.");
+            throw new InvalidSpaceException("Invalid space. Try again!.");
         }
     }
 
-    public void printSpaces(Vehicle vehicle) {
+    public void printData(Vehicle vehicle) {
         for (int i = 0; i < vehicles.size(); i++) {
             if (vehicles.get(i) != null) {
-                System.out.println(vehicles.get(i).toString() + " / Position #" + i);
+                System.out.println("VEHICLE REGISTER:\n" + vehicles.get(i).toString() + " / Position #" + i);
             }
         }
     }
 
-    public void entry(Vehicle vehicle) throws InvalidSignException {
+    public void entry(Vehicle vehicle) {
         if (availablesParkingSpaces > 0) {
-            String sign = vehicle.getSign();
-            vehicle.setSign(sign);
             System.out.println("Welcome to the parking lot!");
             availablesParkingSpaces--;
         } else {
@@ -58,5 +55,8 @@ public class Parking {
         availablesParkingSpaces++;
         System.out.println("Time to Exit, let's calculate your fare.\n\nSo, your fare will be 5$ + (0,5$ * Hours that your vehicle spend there.)");
         vehicles.remove(vehicle);
+    }
+    public void signValidate(Vehicle vehicle, String sign) throws InvalidSignException {
+        vehicle.setSign(sign);
     }
 }

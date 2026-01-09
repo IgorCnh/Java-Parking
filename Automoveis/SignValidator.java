@@ -18,13 +18,13 @@ public class SignValidator {
         for(int i = 0; i < sign.length(); i++){
             char c = sign.charAt(i);
             switch (i) {
-                case 0 -> containsLetter1 = Character.isLetter(c);
-                case 1 -> containsLetter2 = Character.isLetter(c);
-                case 2 -> containsLetter3 = Character.isLetter(c);
-                case 3 -> containsDigit1  = Character.isDigit(c);
-                case 4 -> containsLetter4 = Character.isLetter(c);
-                case 5 -> containsDigit2  = Character.isDigit(c);
-                case 6 -> containsDigit3  = Character.isDigit(c);
+                case 0: containsLetter1 = Character.isLetter(c);
+                case 1: containsLetter2 = Character.isLetter(c);
+                case 2: containsLetter3 = Character.isLetter(c);
+                case 3: containsDigit1  = Character.isDigit(c);
+                case 4: containsLetter4 = Character.isLetter(c);
+                case 5: containsDigit2  = Character.isDigit(c);
+                case 6: containsDigit3  = Character.isDigit(c);
             }
         }
         return (containsLetter1 && containsLetter2 && containsLetter3 && containsLetter4 && containsDigit1 && containsDigit2 && containsDigit3);
