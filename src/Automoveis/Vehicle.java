@@ -1,16 +1,16 @@
 package Automoveis;
 
-import Program.InvalidSignException;
-import Program.WrongExitEntryException;
+import Exceptions.InvalidSignException;
+import Exceptions.WrongExitEntryException;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Vehicle {
     private VeiculoType model;
     private String brand;
     private String sign;
-    private String color;
 
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;
@@ -18,11 +18,10 @@ public class Vehicle {
     public Vehicle() {
     }
 
-    public Vehicle(VeiculoType model, String brand, String sign, String color) {
+    public Vehicle(VeiculoType model, String brand, String sign) {
         this.model = model;
         this.brand = brand;
         this.sign = sign;
-        this.color = color;
     }
 
     public String getSign() {
@@ -30,12 +29,7 @@ public class Vehicle {
     }
 
     public void setSign(String sign) throws InvalidSignException {
-        if (SignValidator.validate(sign) == true) {
-            this.sign = sign;
-            System.out.println("Your vehicle has been registered!");
-        } else {
-            throw new InvalidSignException("Invalid sign. Try again!.");
-        }
+        this.sign = sign;
     }
 
     public VeiculoType getModel() {
@@ -54,16 +48,8 @@ public class Vehicle {
         this.brand = brand;
     }
 
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
     public String toString() {
-        return "Model: " + model.toString() + " / Brand: " + brand + " / Sign: " + sign + " / Color: " + color;
+        return "Model: " + model.toString() + " / Brand: " + brand + " / Sign: " + sign;
     }
 
     public LocalDateTime getEntryTime() {
@@ -94,4 +80,15 @@ public class Vehicle {
         return Duration.between(entryTime, exitTime);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Vehicle vehicle = (Vehicle) o;
+        return Objects.equals(sign, vehicle.sign);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(sign);
+    }
 }
