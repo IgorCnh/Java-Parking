@@ -1,10 +1,11 @@
 package Program;
 
-import Automoveis.SignValidator;
+import Automoveis.MercosulSignValidator;
 import Automoveis.Vehicle;
 import Automoveis.VeiculoType;
 import Estacionamento.Parking;
 import Exceptions.InvalidSignException;
+import Exceptions.InvalidSpaceException;
 import Exceptions.WrongExitEntryException;
 
 import java.time.DateTimeException;
@@ -17,106 +18,103 @@ public class MainProgram {
     public static void main(String[] args) {
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
-        Vehicle vehicle = new Vehicle();
-        SignValidator mercosulValidator = new SignValidator();
         Parking streetPark = new Parking(25);
-
-        streetPark.entry();//VERIFICA SE EXISTEM VAGAS DISPONIVIES
-
-        VeiculoType type = null; //VERIFICA SE O TIPO É VALIDO
-        boolean istype = false;
+        streetPark.parkingEntry();
         System.out.print("Enter vehicle type: (Car, Motorcycle or Truck) ");
-        while (istype == false) {
+        VeiculoType type = typeVerifier(sc);
+        System.out.print("Provide the vehicle sign: ");
+        String sign = signVerifier(sc);
+        Vehicle vehicle = new Vehicle(type, sign);
+        System.out.println("Provide the entry time: (dd/MM/yyyy HH:mm)");
+        entryDateTimeVerifier(sc, vehicle);
+        System.out.println("It's time to choose the parking space!");
+        System.out.print("Enter with the space wanted by the client: (0 - 25) ");
+        int space = parkingSpaceVerifier(sc, streetPark);
+        streetPark.occupySpace(space, vehicle);
+
+        System.out.println("\n\n EXIT TIME...\n\n");
+
+        System.out.println("\nProvide the exit time: (dd/MM/yyyy HH:mm)");
+        exitDateTimeVerifier(sc, vehicle);
+        System.out.println("So, let's calculate the time that the client been there...");
+        String formatted = String.format("%02d:%02d\n", vehicle.getDuration().toHours(), vehicle.getDuration().toMinutes() % 60);
+        System.out.printf("The duration is %sh", formatted);
+        streetPark.calculateFare(vehicle);
+
+        streetPark.parkingExit(vehicle);
+        sc.close();
+    }
+
+    //FUNçOES
+
+    public final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    public static VeiculoType typeVerifier(Scanner sc) {
+        while (true) {
             try {
-                type = VeiculoType.valueOf(sc.nextLine().toUpperCase());
-                istype = true;
+                VeiculoType type = VeiculoType.valueOf(sc.nextLine().toUpperCase());
+                return type;
             } catch (IllegalArgumentException invtype) {
                 System.out.println("Invalid input.");
                 System.out.print("Try again: (Car, Motorcycle or Truck) ");
             }
         }
-        System.out.print("Provide the vehicle brand: "); //VERIFICA SE A MARCA É VALIDA
-        String brand = null;
+    }
+
+    public static String signVerifier(Scanner sc) {
+        MercosulSignValidator mercosulValidator = new MercosulSignValidator();
         while (true) {
-            brand = sc.nextLine();
-            if (brand.isBlank() || brand.length() <= 0) {
-                System.out.println("Invalid! You need to type something!.");
-                System.out.print("Type the brand here: ");
-            } else {
-                break;
-            }
-        }
-        System.out.print("Provide the vehicle sign: "); //VERIFICA SE A PLACA É VALIDA
-        String sign = null;
-        boolean isSignCorect = false;
-        while(isSignCorect==false) {
             try {
-                sign = sc.nextLine().toUpperCase();
-                mercosulValidator.signValidate(vehicle, sign);
-                isSignCorect = true;
+                String sign = sc.nextLine().toUpperCase();
+                mercosulValidator.isSignValid(sign);
+                return sign;
             } catch (InvalidSignException invsign) {
                 System.out.println(invsign.getMessage());
                 System.out.print("Try again (\"ABC1D23\"): ");
             }
         }
-        vehicle = new Vehicle(type, brand, sign); //INSTANCIA UM NOVO VEICULO
+    }
 
-
-        System.out.println("Provide the entry time: (dd/MM/yyyy HH:mm)");//VERIFICA SE A DATA DE ENTRADA É VALIDA
-        boolean isDEntryCorrect = false;
-        while (isDEntryCorrect ==false) {
+    public static LocalDateTime entryDateTimeVerifier(Scanner sc, Vehicle vehicle) {
+        while (true) {
             try {
-                LocalDateTime entryTime = LocalDateTime.parse(sc.nextLine(), dtf);
+                LocalDateTime entryTime = LocalDateTime.parse(sc.nextLine(), FORMATTER);
                 vehicle.setEntryTime(entryTime);
-                isDEntryCorrect = true;
+                return entryTime;
             } catch (DateTimeException date) {
                 System.out.println("Invalid date format.");
                 System.out.print("Try again (dd/MM/yyyy HH:mm): ");
-            } catch (WrongExitEntryException entextTime) {
-                System.out.println(entextTime.getMessage());
-                System.out.print("Try again (dd/MM/yyyy HH:mm): ");
             }
         }
+    }
 
-        System.out.println("It's time to choose the parking space!");
-        System.out.print("Enter with the space wanted by the client: (0 - 25) ");
-        int space = 0;
-        boolean isSpaceValid = false;//VERIFICA SE A VAGA ESTA DISPONIVEL
-        while (isSpaceValid==false) {
+    public static LocalDateTime exitDateTimeVerifier(Scanner sc, Vehicle vehicle) {
+        while (true) {
             try {
-                space = sc.nextInt();
-                streetPark.chooseParkingSpace(space, vehicle);
-                isSpaceValid = true;
+                LocalDateTime exitTime = LocalDateTime.parse(sc.nextLine(), FORMATTER);
+                vehicle.setExitTime(exitTime);
+                return exitTime;
+            }catch (DateTimeException date) {
+                System.out.println("Invalid date format.");
+            }catch (WrongExitEntryException exitexc){
+                System.out.println(exitexc.getMessage());
+            }
+        }
+    }
+
+    public static int parkingSpaceVerifier(Scanner sc, Parking parking) {
+        while (true) {
+            try {
+                int space = sc.nextInt();
+                sc.nextLine();
+                parking.isSpaceFilled(space);
+                return space;
             } catch (IndexOutOfBoundsException invspace) {
                 System.out.println(invspace.getMessage());
                 System.out.print("Try again (1 - 25): ");
+            }catch (InvalidSpaceException invspace) {
+                System.out.println(invspace.getMessage());
             }
         }
-        sc.nextLine();
-
-        System.out.println("\n\n EXIT TIME...\n\n");
-        System.out.println("\nProvide the exit time: (dd/MM/yyyy HH:mm)");//VERIFICA SE A DATA É VALIDA
-        boolean isExitValid = false;
-        while (isExitValid==false) {
-            try {
-                LocalDateTime exitTime = LocalDateTime.parse(sc.nextLine(), dtf);
-                vehicle.setExitTime(exitTime);
-                isExitValid = true;
-            } catch (DateTimeException date) {
-                System.out.println("Invalid date format.");
-                System.out.print("Try again (dd/MM/yyyy HH:mm): ");
-            } catch (WrongExitEntryException entextTime) {
-                System.out.println(entextTime.getMessage());
-                System.out.print("Try again (dd/MM/yyyy HH:mm): ");
-            }
-        }
-        System.out.println("So, let's calculate the time that the client been there...");//CALCULA A DURAÇAO DA "ESTADIA"
-        String formatted = String.format("%02d:%02d", vehicle.getDuration().toHours(), vehicle.getDuration().toMinutes() % 60);
-        System.out.println("The duration is " + formatted + "\n");
-        streetPark.exit(vehicle);
-
-        sc.close();
     }
 }

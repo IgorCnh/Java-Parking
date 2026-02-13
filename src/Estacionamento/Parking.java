@@ -1,6 +1,8 @@
 package Estacionamento;
 
 import Automoveis.Vehicle;
+import Exceptions.InvalidSpaceException;
+import Interfaces.FareCalculator;
 
 
 import java.time.Duration;
@@ -14,47 +16,46 @@ public class Parking implements FareCalculator {
         availablesParkingSpaces = capacity;
         mapVehicle = new TreeMap<>();
     }
-
-
-    public void chooseParkingSpace(int space, Vehicle vehicle) throws IndexOutOfBoundsException {
-        if ((space <= availablesParkingSpaces) && (space >= 1)) { //verifica se o input da vaga foi válido (o estacionamento tem x vagas)
-            if (!mapVehicle.containsKey(space)) { //verifica se a vaga esta vazia / não tem outro com a mesma key
-                mapVehicle.put(space, vehicle);
-                availablesParkingSpaces--;
-            } else {
-                System.out.println("This position is already filled, ask for another position.");
-            }
+    public void occupySpace(int space, Vehicle vehicle) throws IndexOutOfBoundsException{
+        mapVehicle.put(space, vehicle);
+    }
+    public void parkingEntry() { //adiciona o veicula ao estacionamento
+        verifyIfHaveSpace();
+    }
+    @Override
+    public void calculateFare(Vehicle vehicle) {
+        System.out.println("Calculating Fare...");
+        if (isInToleranceTime(vehicle)){
+            System.out.println("The client didn't take long, he is exempt of fare.");
         }
-        else {
-            throw new IndexOutOfBoundsException("Invalid space. Try again!.");
+        else{
+            double fare = 5 + 0.5 * (vehicle.getDuration().toMinutes() / 60.0);
+            System.out.print("The client's fare will be: " + String.format("%.2f", fare));
         }
     }
-
-    public void entry() { //adiciona o veicula ao estacionamento
+    public void parkingExit(Vehicle vehicle) { //retira o veiculo do estacionamento
+        mapVehicle.values().remove(vehicle);
+        availablesParkingSpaces++;
+    }
+    public boolean isInToleranceTime(Vehicle vehicle) {
+        if (vehicle.getDuration().compareTo(Duration.ofMinutes(10)) < 0){
+            return true;
+        }
+        return false;
+    }
+    private void verifyIfHaveSpace() {
         if (availablesParkingSpaces > 0) { //verifica se o estacionamento possui vagas disponiveis
             System.out.println("There are available parking spaces, start the vehicle registration");
         } else {
             System.out.println("The parking lot is full...");
         }
     }
-    @Override
-    public double calcularFare(Vehicle vehicle) {
-        System.out.println("Calculating Fare...");
-        if (vehicle.getDuration().compareTo(Duration.ofMinutes(10)) < 0){ // verifica se a duração é menor que a tolerancia
-            double fare = 0;
-            System.out.println("The client didn't take long, he is exempt of fare.");
-            return fare;
+    public boolean isSpaceFilled(int space) throws InvalidSpaceException {
+        if (mapVehicle.get(space) == null) {
+            return false;
         }
-        else{ //caso o contrario, deve se pagar a taxa de 5$ + 0.5 * a quantidade de horas gastas no estacionamento
-            double fare = 5 + 0.5 * (vehicle.getDuration().toMinutes() / 60.0);
-            System.out.print("The client's fare will be: " + String.format("%.2f", fare));
-            return fare;
+        else  {
+            throw new InvalidSpaceException("Filled space. Choose another one!");
         }
-    }
-    public void exit(Vehicle vehicle) { //retira o veiculo do estacionamento
-        System.out.println("Time to Exit. Let's calculate the client's fare.");
-        calcularFare(vehicle);
-        mapVehicle.values().remove(vehicle);
-        availablesParkingSpaces++;
     }
 }
