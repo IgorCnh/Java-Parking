@@ -1,13 +1,14 @@
 package Automoveis;
 
 import Exceptions.InvalidSignException;
+import Interfaces.SignValidate;
 
-public class SignValidator { //A classe signValidator valida a placa do carro no padrão MERCOSUL
-    public static boolean validate(String sign){
+public class SignValidator implements SignValidate { //A classe signValidator valida a placa do carro no padrão MERCOSUL
+    @Override
+    public boolean isSignValid(String sign) throws InvalidSignException {
         if(sign.length() != 7){ //Não existe placa menor de 7 digitos
             return false;
         }
-
         boolean containsLetter1= false;
         boolean containsLetter2= false;
         boolean containsLetter3= false;
@@ -15,8 +16,6 @@ public class SignValidator { //A classe signValidator valida a placa do carro no
         boolean containsLetter4= false;
         boolean containsDigit2= false;
         boolean containsDigit3= false;
-
-
         for(int i = 0; i < sign.length(); i++){ //verifica se o padrão ABC1D23 existe na placa digitada pelo user
             char c = sign.charAt(i);
             switch (i) {
@@ -31,14 +30,7 @@ public class SignValidator { //A classe signValidator valida a placa do carro no
         } //Caso a placa preencha todos os campos corretamente, retorna true
         return (containsLetter1 && containsLetter2 && containsLetter3 && containsLetter4 && containsDigit1 && containsDigit2 && containsDigit3);
     }
-    public void signValidate(Vehicle vehicle, String sign) throws InvalidSignException {
-        if (SignValidator.validate(sign) == true) {
-            vehicle.setSign(sign); //implementa o sistema de verificação de placa no sistema principal
-        }
-        else {
-            throw new InvalidSignException("Invalid sign. Try again!.");
-        }
-    }
+    public void signImplementation()
 }
 
 /**
