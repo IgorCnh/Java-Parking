@@ -12,3 +12,6 @@ out/
 # macOS
 .DS_Store
 
+#configs locais
+db.properties
+
