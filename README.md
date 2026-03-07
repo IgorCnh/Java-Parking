@@ -1,14 +1,14 @@
-# 🚗 Java Parking System
+# Java Parking System
 
 Projeto desenvolvido em **Java** com o objetivo de simular um **software de gerenciamento de estacionamento**.
 
-⚠️ **Status do projeto:**  
+ **Status do projeto:**  
 🚧 *Em construção* 🚧  
 Este projeto ainda está em desenvolvimento e novas funcionalidades serão adicionadas em breve.
 
 ---
 
-## 📌 Sobre o projeto
+## Sobre o projeto
 
 O **Java Parking System** é um sistema que permite gerenciar:
 
@@ -29,7 +29,7 @@ O foco do projeto é aplicar conceitos fundamentais e intermediários de **Java*
 
 ---
 
-## 🛠️ Tecnologias utilizadas
+## Tecnologias utilizadas
 
 - **Java**
 - JDK 11+ (compatível)
@@ -38,15 +38,12 @@ O foco do projeto é aplicar conceitos fundamentais e intermediários de **Java*
 
 ---
 
-## 🚀 Funcionalidades (em andamento)
+## Funcionalidades (em andamento)
 
 - [x] Cadastro de veículos  
 - [x] Escolha de vaga  
 - [x] Controle de entrada e saída  
 - [x] Cálculo de tempo estacionado  
-- [ ] Interface mais amigável  
-- [ ] Persistência de dados  
-- [ ] Relatórios  
 
 ---
 DESENVOLVEDOR DO SOFTWARE -> Igor Cunha.
