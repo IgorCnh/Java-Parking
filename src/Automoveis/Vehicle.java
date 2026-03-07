@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 public class Vehicle {
     private VeiculoType type;
-    private String brand;
     private String sign;
     private LocalDateTime entryTime;
     private LocalDateTime exitTime;

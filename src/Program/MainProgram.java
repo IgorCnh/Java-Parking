@@ -2,12 +2,16 @@ package Program;
 
 import Automoveis.MercosulSignValidator;
 import Automoveis.Vehicle;
+import Automoveis.VehicleDaoJDBC;
 import Automoveis.VeiculoType;
 import Estacionamento.Parking;
 import Exceptions.InvalidSignException;
 import Exceptions.InvalidSpaceException;
 import Exceptions.WrongExitEntryException;
+import DB.DB;
+import Interfaces.VehicleDAO;
 
+import java.sql.Connection;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +20,8 @@ import java.util.Scanner;
 
 public class MainProgram {
     public static void main(String[] args) {
+        Connection conn = DB.getConnection();
+        VehicleDAO dao = new VehicleDaoJDBC(conn);
         Locale.setDefault(Locale.US);
         Scanner sc = new Scanner(System.in);
         Parking streetPark = new Parking(25);
@@ -27,21 +33,31 @@ public class MainProgram {
         Vehicle vehicle = new Vehicle(type, sign);
         System.out.println("Provide the entry time: (dd/MM/yyyy HH:mm)");
         entryDateTimeVerifier(sc, vehicle);
+        dao.insertVehicle(vehicle);
         System.out.println("It's time to choose the parking space!");
         System.out.print("Enter with the space wanted by the client: (0 - 25) ");
         int space = parkingSpaceVerifier(sc, streetPark);
         streetPark.occupySpace(space, vehicle);
 
+        System.out.println("Do you want to continue (y/n): ");
+        char answer = sc.next().charAt(0);
+        if (answer == 'n') {
+            System.out.println("Thank you for using this program!");
+            System.exit(0);
+        }
+
         System.out.println("\n\n EXIT TIME...\n\n");
 
         System.out.println("\nProvide the exit time: (dd/MM/yyyy HH:mm)");
         exitDateTimeVerifier(sc, vehicle);
+        dao.updateVehicle(vehicle);
         System.out.println("So, let's calculate the time that the client been there...");
         String formatted = String.format("%02d:%02d\n", vehicle.getDuration().toHours(), vehicle.getDuration().toMinutes() % 60);
         System.out.printf("The duration is %sh", formatted);
         streetPark.calculateFare(vehicle);
 
         streetPark.parkingExit(vehicle);
+        dao.deleteVehicle(vehicle);
         sc.close();
     }
 
