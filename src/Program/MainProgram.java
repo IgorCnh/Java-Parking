@@ -29,8 +29,8 @@ public class MainProgram {
         System.out.print("Enter vehicle type: (Car, Motorcycle or Truck) ");
         VeiculoType type = typeVerifier(sc);
         System.out.print("Provide the vehicle sign: ");
-        String sign = signVerifier(sc);
-        Vehicle vehicle = new Vehicle(type, sign);
+        String sign = signVerifier(sc, conn);
+        Vehicle vehicle = new Vehicle(type, sign.toUpperCase());
         System.out.println("Entry time registered!");
         entryDateTimeVerifier(vehicle);
         dao.insertVehicle(vehicle);
@@ -76,16 +76,21 @@ public class MainProgram {
         }
     }
 
-    public static String signVerifier(Scanner sc) {
+    public static String signVerifier(Scanner sc, Connection conn) {
         MercosulSignValidator mercosulValidator = new MercosulSignValidator();
+        VehicleDaoJDBC dao = new VehicleDaoJDBC(conn);
         while (true) {
             try {
-                String sign = sc.nextLine().toUpperCase();
+                String sign = sc.next().toUpperCase();
                 mercosulValidator.isSignValid(sign);
-                return sign;
+                if(dao.signAlreadyExists(sign.toUpperCase()) == true){
+                    System.out.println("Sign already exists. " + "\ntype again('ABC1D23'): ");
+                }else {
+                    return sign;
+                }
             } catch (InvalidSignException invsign) {
                 System.out.println(invsign.getMessage());
-                System.out.print("Try again (\"ABC1D23\"): ");
+                System.out.print("Try again ('ABC1D23'): ");
             }
         }
     }

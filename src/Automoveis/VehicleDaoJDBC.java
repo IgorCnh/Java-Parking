@@ -94,4 +94,22 @@ public class VehicleDaoJDBC implements VehicleDAO {
     public List<Vehicle> getAllVehicles() {
         return List.of();
     }
+
+    public boolean signAlreadyExists(String sign) {
+        String query = "SELECT EXISTS(SELECT * FROM parking WHERE sign=?)";
+        boolean exists = false;
+        try(PreparedStatement ps = conn.prepareStatement(query)){
+            ps.setString(1, sign);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                exists = rs.getBoolean(1);
+            }
+            if(exists == true){
+                return true;
+            }
+        }catch (SQLException e){
+            e.getMessage();
+        }
+        return exists;
+    }
 }
