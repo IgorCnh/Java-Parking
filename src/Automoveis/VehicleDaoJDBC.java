@@ -14,7 +14,7 @@ public class VehicleDaoJDBC implements VehicleDAO {
     }
     @Override
     public void insertVehicle(Vehicle vehicle) {
-        String query = "INSERT INTO parking (sign, type, entryTime, exitTime) VALUES (?, ?, ?, null)";
+        String query = "INSERT INTO parking (sign, type, entryTime) VALUES (?, ?, ?)";
         try(PreparedStatement ps = conn.prepareStatement(query)){
             ps.setString(1, vehicle.getSign());
             ps.setString(2, String.valueOf(vehicle.getType()));

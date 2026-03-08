@@ -31,8 +31,8 @@ public class MainProgram {
         System.out.print("Provide the vehicle sign: ");
         String sign = signVerifier(sc);
         Vehicle vehicle = new Vehicle(type, sign);
-        System.out.println("Provide the entry time: (dd/MM/yyyy HH:mm)");
-        entryDateTimeVerifier(sc, vehicle);
+        System.out.println("Entry time registered!");
+        entryDateTimeVerifier(vehicle);
         dao.insertVehicle(vehicle);
         System.out.println("It's time to choose the parking space!");
         System.out.print("Enter with the space wanted by the client: (0 - 25) ");
@@ -57,7 +57,6 @@ public class MainProgram {
         streetPark.calculateFare(vehicle);
 
         streetPark.parkingExit(vehicle);
-        dao.deleteVehicle(vehicle);
         sc.close();
     }
 
@@ -91,10 +90,12 @@ public class MainProgram {
         }
     }
 
-    public static LocalDateTime entryDateTimeVerifier(Scanner sc, Vehicle vehicle) {
+    public static LocalDateTime entryDateTimeVerifier(Vehicle vehicle) {
         while (true) {
             try {
-                LocalDateTime entryTime = LocalDateTime.parse(sc.nextLine(), FORMATTER);
+                LocalDateTime entryTime = LocalDateTime.now()
+                                .withSecond(0)
+                                .withNano(0);
                 vehicle.setEntryTime(entryTime);
                 return entryTime;
             } catch (DateTimeException date) {
