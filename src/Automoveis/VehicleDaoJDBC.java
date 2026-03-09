@@ -14,11 +14,10 @@ public class VehicleDaoJDBC implements VehicleDAO {
     }
     @Override
     public void insertVehicle(Vehicle vehicle) {
-        String query = "INSERT INTO parking (sign, type, entryTime) VALUES (?, ?, ?)";
+        String query = "INSERT INTO vehicles (sign, type) VALUES (?, ?)";
         try(PreparedStatement ps = conn.prepareStatement(query)){
             ps.setString(1, vehicle.getSign());
             ps.setString(2, String.valueOf(vehicle.getType()));
-            ps.setTimestamp(3, Timestamp.valueOf(vehicle.getEntryTime()));
 
             ps.executeUpdate();
         }catch (SQLException e){
@@ -29,14 +28,12 @@ public class VehicleDaoJDBC implements VehicleDAO {
     @Override
     public void updateVehicle(Vehicle vehicle) {
 
-        String query = "UPDATE parking SET sign=?, type=?, entryTime=?, exitTime=? WHERE sign=?";
+        String query = "UPDATE vehicles SET sign=?, type=? WHERE sign=?";
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
 
             ps.setString(1, vehicle.getSign());
             ps.setString(2, String.valueOf(vehicle.getType()));
-            ps.setTimestamp(3, Timestamp.valueOf(vehicle.getEntryTime()));
-            ps.setTimestamp(4, Timestamp.valueOf(vehicle.getExitTime()));
             ps.setString(5, vehicle.getSign());
 
             ps.executeUpdate();
@@ -47,7 +44,7 @@ public class VehicleDaoJDBC implements VehicleDAO {
     }
     @Override
     public void deleteVehicle(Vehicle vehicle) {
-        String query = "DELETE FROM parking WHERE sign=?";
+        String query = "DELETE FROM vehicles WHERE sign=?";
         try(PreparedStatement ps = conn.prepareStatement(query)){
             ps.setString(1, vehicle.getSign());
             ps.executeUpdate();
@@ -59,7 +56,7 @@ public class VehicleDaoJDBC implements VehicleDAO {
     @Override
     public Vehicle getVehicle(String sign) {
 
-        String query = "SELECT * FROM parking WHERE sign=?";
+        String query = "SELECT * FROM vehicles WHERE sign=?";
 
         try (PreparedStatement ps = conn.prepareStatement(query)) {
 
@@ -96,7 +93,7 @@ public class VehicleDaoJDBC implements VehicleDAO {
     }
 
     public boolean signAlreadyExists(String sign) {
-        String query = "SELECT EXISTS(SELECT * FROM parking WHERE sign=?)";
+        String query = "SELECT EXISTS(SELECT * FROM vehicles WHERE sign=?)";
         boolean exists = false;
         try(PreparedStatement ps = conn.prepareStatement(query)){
             ps.setString(1, sign);

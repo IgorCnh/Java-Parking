@@ -1,9 +1,6 @@
 package Program;
 
-import Automoveis.MercosulSignValidator;
-import Automoveis.Vehicle;
-import Automoveis.VehicleDaoJDBC;
-import Automoveis.VeiculoType;
+import Automoveis.*;
 import Estacionamento.Parking;
 import Exceptions.InvalidSignException;
 import Exceptions.InvalidSpaceException;
@@ -12,6 +9,7 @@ import DB.DB;
 import Interfaces.VehicleDAO;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -29,11 +27,11 @@ public class MainProgram {
         System.out.print("Enter vehicle type: (Car, Motorcycle or Truck) ");
         VeiculoType type = typeVerifier(sc);
         System.out.print("Provide the vehicle sign: ");
-        String sign = signVerifier(sc, conn);
+        String sign = signVerifier(sc);
         Vehicle vehicle = new Vehicle(type, sign.toUpperCase());
         System.out.println("Entry time registered!");
         entryDateTimeVerifier(vehicle);
-        dao.insertVehicle(vehicle);
+        vehicleEntry(vehicle);
         System.out.println("It's time to choose the parking space!");
         System.out.print("Enter with the space wanted by the client: (0 - 25) ");
         int space = parkingSpaceVerifier(sc, streetPark);
@@ -64,6 +62,20 @@ public class MainProgram {
 
     public final static DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
+    public static void vehicleEntry(Vehicle vehicle) {
+        Connection conn = DB.getConnection();
+            VehicleDaoJDBC vdao = new VehicleDaoJDBC(conn);
+            RegisterDaoJDBC rdao = new RegisterDaoJDBC(conn);
+            if(vdao.signAlreadyExists(vehicle.getSign()) == true) {
+                rdao.insertVehicleRegister(vehicle);
+            }
+            else {
+                vdao.insertVehicle(vehicle);
+                rdao.insertVehicleRegister(vehicle);
+            }
+
+    }
+
     public static VeiculoType typeVerifier(Scanner sc) {
         while (true) {
             try {
@@ -76,15 +88,24 @@ public class MainProgram {
         }
     }
 
-    public static String signVerifier(Scanner sc, Connection conn) {
+    public static String signVerifier(Scanner sc) {
         MercosulSignValidator mercosulValidator = new MercosulSignValidator();
-        VehicleDaoJDBC dao = new VehicleDaoJDBC(conn);
+        VehicleDaoJDBC dao = new VehicleDaoJDBC(DB.getConnection());
         while (true) {
             try {
                 String sign = sc.next().toUpperCase();
                 mercosulValidator.isSignValid(sign);
                 if(dao.signAlreadyExists(sign.toUpperCase()) == true){
-                    System.out.println("Sign already exists. " + "\ntype again('ABC1D23'): ");
+                    System.out.println("Sign already exists. Do you want to type again or add a new register for thi sign?: " +
+                            "\nNew sign (1)" +
+                            "\nNew register(2)");
+                    int answer = sc.nextInt();
+                    switch (answer) {
+                        case 1:
+                            System.out.println("That's OK! Type again: ");
+                        case 2:
+                            return sign;
+                    }
                 }else {
                     return sign;
                 }
